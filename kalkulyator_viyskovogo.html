@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Калькулятор військового</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f5f7;
+      color: #1f2937;
+    }
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+    .hero {
+      background: #111827;
+      color: white;
+      padding: 28px 20px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+    .hero p {
+      margin: 0;
+      line-height: 1.45;
+      color: #d1d5db;
+    }
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      border: 0;
+      border-radius: 14px;
+      background: #111827;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { opacity: .92; }
+    .result {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      line-height: 1.55;
+      display: none;
+    }
+    .note {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.45;
+    }
+    .small {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 10px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Калькулятор військового</h1>
+      <p>Порахуй, скільки залишилось до кінця контракту та скільки днів відпустки вже використано. Простий інструмент без реєстрації.</p>
+    </section>
+
+    <section class="card">
+      <h2>1. Калькулятор контракту</h2>
+
+      <label for="startDate">Дата початку контракту</label>
+      <input type="date" id="startDate">
+
+      <label for="endDate">Дата закінчення контракту</label>
+      <input type="date" id="endDate">
+
+      <button onclick="calculateContract()">Порахувати</button>
+
+      <div class="result" id="contractResult"></div>
+
+      <p class="small">Приклад: якщо контракт підписано 16.09.2024 на 3 роки — дата завершення може бути 16.09.2027.</p>
+    </section>
+
+    <section class="card">
+      <h2>2. Калькулятор відпустки</h2>
+
+      <label for="totalVacation">Скільки діб відпустки належить</label>
+      <input type="number" id="totalVacation" placeholder="Наприклад: 30">
+
+      <label for="usedVacation">Скільки діб вже використано</label>
+      <input type="number" id="usedVacation" placeholder="Наприклад: 15">
+
+      <label for="roadDays">Доби на дорогу, якщо були</label>
+      <input type="number" id="roadDays" placeholder="Наприклад: 2" value="0">
+
+      <button onclick="calculateVacation()">Порахувати</button>
+
+      <div class="result" id="vacationResult"></div>
+
+      <p class="small">Цей калькулятор рахує арифметично. Остаточне рішення завжди залежить від підстав, наказів і чинного законодавства.</p>
+    </section>
+
+    <section class="card">
+      <h2>Важливо</h2>
+      <p class="note">
+        Сайт не є юридичною консультацією. Він допомагає швидко порахувати дати та залишки днів.
+        Перед подачею рапорту або прийняттям рішення краще звірити інформацію з кадровим органом або юристом.
+      </p>
+    </section>
+
+    <div class="footer">
+      Зроблено для військових • Версія 1.0
+    </div>
+  </div>
+
+  <script>
+    function formatDate(date) {
+      return date.toLocaleDateString('uk-UA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+
+    function daysBetween(from, to) {
+      const oneDay = 1000 * 60 * 60 * 24;
+      const start = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+      const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+      return Math.ceil((end - start) / oneDay);
+    }
+
+    function calculateContract() {
+      const startInput = document.getElementById('startDate').value;
+      const endInput = document.getElementById('endDate').value;
+      const result = document.getElementById('contractResult');
+
+      if (!startInput || !endInput) {
+        result.style.display = 'block';
+        result.innerHTML = 'Заповни дату початку та дату закінчення контракту.';
+        return;
+      }
+
+      const startDate = new Date(startInput);
+      const endDate = new Date(endInput);
+      const today = new Date();
+
+      if (endDate < startDate) {
+        result.style.display = 'block';
+        result.innerHTML = 'Дата завершення не може бути раніше дати початку.';
+        return;
+      }
+
+      const totalDays = daysBetween(startDate, endDate);
+      const passedDays = Math.max(0, daysBetween(startDate, today));
+      const leftDays = daysBetween(today, endDate);
+
+      let text = `<b>Початок контракту:</b> ${formatDate(startDate)}<br>
+                  <b>Завершення контракту:</b> ${formatDate(endDate)}<br>
+                  <b>Загальна тривалість:</b> ${totalDays} днів<br>`;
+
+      if (leftDays > 0) {
+        text += `<b>Минуло:</b> ${Math.min(passedDays, totalDays)} днів<br>
+                 <b>Залишилось:</b> ${leftDays} днів`;
+      } else if (leftDays === 0) {
+        text += `<b>Сьогодні дата завершення контракту.</b>`;
+      } else {
+        text += `<b>Контракт мав завершитися ${Math.abs(leftDays)} днів тому.</b>`;
+      }
+
+      result.style.display = 'block';
+      result.innerHTML = text;
+    }
+
+    function calculateVacation() {
+      const total = Number(document.getElementById('totalVacation').value);
+      const used = Number(document.getElementById('usedVacation').value);
+      const road = Number(document.getElementById('roadDays').value || 0);
+      const result = document.getElementById('vacationResult');
+
+      if (!total && total !== 0 || !used && used !== 0) {
+        result.style.display = 'block';
+        result.innerHTML = 'Заповни кількість належних та використаних діб.';
+        return;
+      }
+
+      if (total < 0 || used < 0 || road < 0) {
+        result.style.display = 'block';
+        result.innerHTML = 'Кількість діб не може бути меншою за нуль.';
+        return;
+      }
+
+      const remaining = total - used;
+      const totalWithRoad = used + road;
+
+      let text = `<b>Належить відпустки:</b> ${total} діб<br>
+                  <b>Використано відпустки:</b> ${used} діб<br>
+                  <b>Доби на дорогу:</b> ${road} діб<br>
+                  <b>Всього використано з дорогою:</b> ${totalWithRoad} діб<br>`;
+
+      if (remaining > 0) {
+        text += `<b>Залишок відпустки:</b> ${remaining} діб`;
+      } else if (remaining === 0) {
+        text += `<b>Залишку відпустки немає.</b>`;
+      } else {
+        text += `<b>Перевищення:</b> ${Math.abs(remaining)} діб`;
+      }
+
+      result.style.display = 'block';
+      result.innerHTML = text;
+    }
+  </script>
+</body>
+</html>
