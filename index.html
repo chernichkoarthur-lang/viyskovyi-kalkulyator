@@ -153,7 +153,12 @@
 
     <label for="serviceEnd">Дата завершення служби</label>
     <input type="date" id="serviceEnd">
-
+<label for="serviceCoeff">Коефіцієнт вислуги</label>
+<select id="serviceCoeff">
+    <option value="1">Календарна (1:1)</option>
+    <option value="2">Пільгова (1:2)</option>
+    <option value="3">Пільгова (1:3)</option>
+</select>
     <button onclick="calculateService()">Порахувати</button>
 
     <div class="result" id="serviceResult"></div>
@@ -223,7 +228,7 @@ function calculateService() {
     const startInput = document.getElementById('serviceStart').value;
     const endInput = document.getElementById('serviceEnd').value;
     const result = document.getElementById('serviceResult');
-
+const coeff = Number(document.getElementById('serviceCoeff').value);
     if (!startInput || !endInput) {
         result.style.display = 'block';
         result.innerHTML = 'Заповніть дату початку та дату завершення служби.';
@@ -239,7 +244,7 @@ function calculateService() {
         return;
     }
 
-    let years = endDate.getFullYear() - startDate.getFullYear();
+    let years = (endDate.getFullYear() - startDate.getFullYear()) * coeff;
     let months = endDate.getMonth() - startDate.getMonth();
     let days = endDate.getDate() - startDate.getDate();
 
