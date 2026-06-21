@@ -108,11 +108,11 @@
     <section class="card">
       <h2>1. Калькулятор контракту</h2>
 
-      <label for="startDate">Дата початку контракту</label>
-      <input type="date" id="startDate">
+     <label for="startDate">Дата початку контракту</label>
+<input type="date" id="startDate">
 
-      <label for="endDate">Дата закінчення контракту</label>
-      <input type="date" id="endDate">
+     <label for="contractYears">Строк контракту (років)</label>
+<input type="number" id="contractYears" placeholder="Наприклад: 3" min="1" max="10">
 
       <button onclick="calculateContract()">Порахувати</button>
 
@@ -169,47 +169,31 @@
       return Math.ceil((end - start) / oneDay);
     }
 
-    function calculateContract() {
-      const startInput = document.getElementById('startDate').value;
-      const endInput = document.getElementById('endDate').value;
-      const result = document.getElementById('contractResult');
+    unction calculateContract() {
+    const startInput = document.getElementById('startDate').value;
+    const years = parseInt(document.getElementById('contractYears').value);
+    const result = document.getElementById('contractResult');
 
-      if (!startInput || !endInput) {
+    if (!startInput || !years) {
         result.style.display = 'block';
-        result.innerHTML = 'Заповни дату початку та дату закінчення контракту.';
+        result.innerHTML = 'Заповніть усі поля.';
         return;
-      }
-
-      const startDate = new Date(startInput);
-      const endDate = new Date(endInput);
-      const today = new Date();
-
-      if (endDate < startDate) {
-        result.style.display = 'block';
-        result.innerHTML = 'Дата завершення не може бути раніше дати початку.';
-        return;
-      }
-
-      const totalDays = daysBetween(startDate, endDate);
-      const passedDays = Math.max(0, daysBetween(startDate, today));
-      const leftDays = daysBetween(today, endDate);
-
-      let text = `<b>Початок контракту:</b> ${formatDate(startDate)}<br>
-                  <b>Завершення контракту:</b> ${formatDate(endDate)}<br>
-                  <b>Загальна тривалість:</b> ${totalDays} днів<br>`;
-
-      if (leftDays > 0) {
-        text += `<b>Минуло:</b> ${Math.min(passedDays, totalDays)} днів<br>
-                 <b>Залишилось:</b> ${leftDays} днів`;
-      } else if (leftDays === 0) {
-        text += `<b>Сьогодні дата завершення контракту.</b>`;
-      } else {
-        text += `<b>Контракт мав завершитися ${Math.abs(leftDays)} днів тому.</b>`;
-      }
-
-      result.style.display = 'block';
-      result.innerHTML = text;
     }
+
+    const startDate = new Date(startInput);
+    const endDate = new Date(startDate);
+
+    endDate.setFullYear(endDate.getFullYear() + years);
+
+    const today = new Date();
+    const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+
+    result.style.display = 'block';
+    result.innerHTML = `
+        <strong>Дата завершення контракту:</strong> ${formatDate(endDate)}<br>
+        <strong>Залишилось днів:</strong> ${daysLeft}
+    `;
+}
 
     function calculateVacation() {
       const total = Number(document.getElementById('totalVacation').value);
