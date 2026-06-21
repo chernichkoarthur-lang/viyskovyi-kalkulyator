@@ -245,8 +245,8 @@ const coeff = Number(document.getElementById('serviceCoeff').value);
     }
 
     let years = (endDate.getFullYear() - startDate.getFullYear()) * coeff;
-    let months = endDate.getMonth() - startDate.getMonth();
-    let days = endDate.getDate() - startDate.getDate();
+    let months = (endDate.getMonth() - startDate.getMonth()) * coeff;
+    let days = (endDate.getDate() - startDate.getDate()) * coeff;
 
     if (days < 0) {
         months--;
@@ -260,10 +260,12 @@ const coeff = Number(document.getElementById('serviceCoeff').value);
     }
 
     result.style.display = 'block';
-    result.innerHTML = `
-        🎖️ <strong>Вислуга:</strong><br>
-        ${years} р. ${months} міс. ${days} дн.
-    `;
+   result.innerHTML = `
+🔥 <strong>Вислуга:</strong><br>
+${years} р. ${months} міс. ${days} дн.<br><br>
+
+⚖️ <strong>З урахуванням коефіцієнта:</strong> 1:${coeff}
+`;
 }
 
 function calculateVacation() {
