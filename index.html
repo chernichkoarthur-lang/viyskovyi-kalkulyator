@@ -145,7 +145,21 @@
 
       <p class="small">Цей калькулятор рахує арифметично. Остаточне рішення завжди залежить від підстав, наказів і чинного законодавства.</p>
     </section>
+<section class="card">
+    <h2>3. Калькулятор вислуги</h2>
 
+    <label for="serviceStart">Дата початку служби</label>
+    <input type="date" id="serviceStart">
+
+    <label for="serviceEnd">Дата завершення служби</label>
+    <input type="date" id="serviceEnd">
+
+    <button onclick="calculateService()">Порахувати</button>
+
+    <div class="result" id="serviceResult"></div>
+
+    <p class="small">Якщо служба триває, вкажіть сьогоднішню дату.</p>
+</section>
     <section class="card">
       <h2>Важливо</h2>
       <p class="note">
@@ -204,8 +218,50 @@
     🔥 <strong>Всього:</strong> ${daysLeft} днів
 `;
 }
+    
+function calculateService() {
+    const startInput = document.getElementById('serviceStart').value;
+    const endInput = document.getElementById('serviceEnd').value;
+    const result = document.getElementById('serviceResult');
 
-    function calculateVacation() {
+    if (!startInput || !endInput) {
+        result.style.display = 'block';
+        result.innerHTML = 'Заповніть дату початку та дату завершення служби.';
+        return;
+    }
+
+    const startDate = new Date(startInput);
+    const endDate = new Date(endInput);
+
+    if (endDate < startDate) {
+        result.style.display = 'block';
+        result.innerHTML = 'Дата завершення не може бути раніше дати початку.';
+        return;
+    }
+
+    let years = endDate.getFullYear() - startDate.getFullYear();
+    let months = endDate.getMonth() - startDate.getMonth();
+    let days = endDate.getDate() - startDate.getDate();
+
+    if (days < 0) {
+        months--;
+        const previousMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+        days += previousMonth.getDate();
+    }
+
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    result.style.display = 'block';
+    result.innerHTML = `
+        🎖️ <strong>Вислуга:</strong><br>
+        ${years} р. ${months} міс. ${days} дн.
+    `;
+}
+
+function calculateVacation() {
       const total = Number(document.getElementById('totalVacation').value);
       const used = Number(document.getElementById('usedVacation').value);
       const road = Number(document.getElementById('roadDays').value || 0);
