@@ -263,6 +263,7 @@ const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
    result.innerHTML = `
 🔥 <strong>Вислуга:</strong><br>
 ${years} р. ${months} міс. ${days} дн.<br>
+📌 Пільгова вислуга: ${Math.floor(totalDays * coeff / 365)} р. (${totalDays * coeff} днів)<br>
 📅 Всього календарних днів: ${totalDays}
 
 ⚖️ <strong>З урахуванням коефіцієнта:</strong> 1:${coeff}
