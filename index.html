@@ -196,9 +196,10 @@
 
     result.style.display = 'block';
     result.innerHTML = `
-        <strong>Дата завершення контракту:</strong> ${formatDate(endDate)}<br>
-        <strong>Залишилось днів:</strong> ${daysLeft}
-    `;
+    📅 <strong>Дата завершення контракту:</strong> ${formatDate(endDate)}<br><br>
+    ⏳ <strong>До завершення контракту залишилось:</strong><br>
+    🔥 ${daysLeft} днів
+`;
 }
 
     function calculateVacation() {
